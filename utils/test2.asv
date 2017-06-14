@@ -1,0 +1,33 @@
+% etwas zur gerade in der stuidy quadrik durch die identität, im fall der
+% rotationen beschreiben die translationsteile der dualen quaternionen
+% kreise auf der speziellen trägerebene.
+
+% c=[1;-1;1];
+% d = 1/sqrt(3).*[0;1;1];
+
+% c=[-2 2 0];
+% d = [0 0 1];
+
+c=[0 -4 0];
+d = [1 0 0];
+
+a = cross(c,d);
+index = 1;
+for i=0:0.01:2*pi
+%            x(index) = cos(i/2)*(cos(i/2)*c(1)+sin(i/2)*a(1));
+%            y(index) = cos(i/2)*(cos(i/2)*c(2)+sin(i/2)*a(2));
+%            z(index) = cos(i/2)*(cos(i/2)*c(3)+sin(i/2)*a(3));
+%         x(index) = sin(i/2)*(cos(i/2)*c(1)+sin(i/2)*a(1));
+%         y(index) = sin(i/2)*(cos(i/2)*c(2)+sin(i/2)*a(2));
+%         z(index) = sin(i/2)*(cos(i/2)*c(3)+sin(i/2)*a(3));
+%     x(index) = sin(i/2)*(sin(i/2)*c(1)+cos(i/2)*a(1));
+%     y(index) = sin(i/2)*(sin(i/2)*c(2)+cos(i/2)*a(2));
+%     z(index) = sin(i/2)*(sin(i/2)*c(3)+cos(i/2)*a(3));
+    
+    x(index) = (sin(i/2)*c(1)+cos(i/2)*a(1));
+    y(index) = (sin(i/2)*c(2)+cos(i/2)*a(2));
+    z(index) = (sin(i/2)*c(3)+cos(i/2)*a(3));
+    index=index+1;
+end
+p1=plot3(x,y,z);
+axis equal

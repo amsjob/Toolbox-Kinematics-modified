@@ -1,0 +1,97 @@
+classdef Quaternion
+    %Quaternion - class for calculations with quaternions
+    %
+    % o history
+    %   Daniel Klawitter
+    %   created 20-10-2009 - 16:11
+    %
+    % o summary
+    %   class to perform operations on quaternions
+    %
+    % o TODO:
+    %
+    
+    properties
+        scal % quaternion skalarteil
+        vect % vector teil
+    end
+    
+    methods
+        % constructor, generates a new Quaternion object dependend on the
+        % inputs
+        function obj = Quaternion(scal, vect)
+            switch nargin
+                case 0
+                    obj.scal = 0;
+                    obj.vect = [0 0 0];
+                case 1
+                    obj.scal = scal;
+                    obj.vect = [0 0 0];
+                case 2
+                    obj.scal = scal;
+                    obj.vect = vect;
+            end
+        end
+        
+        % overload plus.m
+        % result is a new object of Quaternion type
+        function obj = plus(a,b)
+            obj = Quaternion;
+            obj.scal = a.scal + b.scal;
+            obj.vect = a.vect + b.vect;
+        end
+        
+        % overload minus.m
+        % result is a new object of Quaternion type
+        function obj = minus(a,b)
+            obj = Quaternion;
+            obj.scal = a.scal - b.scal;
+            obj.vect = a.vect - b.vect;
+        end
+        
+        % overload mtimes.m
+        % result is a new object of Quaternion type
+        function obj = mtimes(a,b)
+            obj = Quaternion(0,[0 0 0]);
+            obj.scal = a.scal*b.scal - a.vect*b.vect';
+            obj.vect = a.scal*b.vect + b.scal*a.vect + cross(a.vect,b.vect);
+        end
+        
+        % returns the norm of a Quaternion obj
+        function res = norm(obj)
+            res = obj.scal^2 + sum(obj.vect.^2) ;
+        end
+        
+        % multiply with a scalar using the .* operartor
+        function obj = times(scalar, a)
+            obj = Quaternion;
+            obj.scal = scalar*a.scal;
+            obj.vect = scalar.*a.vect;
+        end
+        
+        % norm to a unit Quaternion
+        function obj = normalize(a)
+            obj = Quaternion;
+            obj = (1/norm(a)).*a;
+        end
+        
+        function obj = inv(a)
+            %             obj = Quaternion;
+            obj = (1/norm(a)).*conjugate(a);
+        end
+        
+        function obj = conjugate(a)
+            obj = Quaternion;
+            obj.scal = a.scal;
+            obj.vect = -a.vect;
+        end
+        
+        function disp(obj)
+            disp('class Quaternion');
+            disp([num2str(obj.scal),' + ',num2str(obj.vect(1)),'i + ', num2str(obj.vect(2)),'j + ',num2str(obj.vect(3)),'k']);
+        end
+        
+    end
+    
+end
+

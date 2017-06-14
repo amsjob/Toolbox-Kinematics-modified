@@ -1,0 +1,190 @@
+%% first example
+
+M = diag([.5 .5 .5 .5],-4) + diag([.5 .5 .5 .5],4);
+
+a={};
+% firts point on the study quadric defined via dual quaternions
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[0.5 0 0.5]));
+Q = T;
+controlPoints.coords = double(Q.getStudyParameters);
+controlPoints.value = 0;
+plotCube(Q.getStudyParameters,1.5);
+hold on;
+a{1} = controlPoints;
+% second point
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[3 -1 1]));
+R = Dualquaternion(Quaternion(0.7071,[0.4082  0.4082  0.4082]),Quaternion);
+Q = T*R;
+controlPoints.coords = double(Q.getStudyParameters);
+controlPoints.value = 0.25;
+plotCube(Q.getStudyParameters,1.5);
+a{2} = controlPoints;
+%---
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[3 1 1]));
+R = Dualquaternion(Quaternion(0.9239,[0 .5 0.3827]),Quaternion);
+Q = T*R;
+controlPoints.coords = double(Q.getStudyParameters);
+controlPoints.value = .5;
+plotCube(Q.getStudyParameters,1.5);
+a{3} = controlPoints;
+%---
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[4 1 1]));
+R = Dualquaternion(Quaternion(0.9877,[0 0.1106 0.1106]),Quaternion);
+Q = T*R;
+controlPoints.coords = double(Q.getStudyParameters);
+controlPoints.value = 0.75;
+plotCube(Q.getStudyParameters,1.5);
+a{4} = controlPoints;
+%---
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[5 1 4]));
+R = Dualquaternion(Quaternion( 0.9808 ,[0.1379 0 0.1379]),Quaternion);
+Q = T*R;
+controlPoints.coords = double(Q.getStudyParameters);
+controlPoints.coords = double(Q.getStudyParameters);
+controlPoints.value = 1;
+plotCube(Q.getStudyParameters,1.5);
+a{5} = controlPoints;
+
+%% second example
+format long
+a={};
+% firts point on the study quadric defined via dual quaternions
+Q = Dualquaternion(Quaternion(0.70713,[0 0 0.70715]),Quaternion(2,[1 3 4]));
+controlPoints.coords = double(Q.getStudyParameters);
+controlPoints.value = 0;
+plotCube(Q.getStudyParameters,2);
+hold on;
+a{1} = controlPoints;
+% second point
+Q = Dualquaternion(Quaternion(0,[0 0 1]),Quaternion(-2,[1.2072 0.50005 0]));
+controlPoints.coords = double(Q.getStudyParameters);
+controlPoints.value = 0.25;
+plotCube(Q.getStudyParameters,2);
+a{2} = controlPoints;
+%---
+Q = Dualquaternion(Quaternion(-0.70725,[0 0 0.70718]),Quaternion(-2.1215,[0.85363 -0.35359 -3.1217]));
+controlPoints.coords = double(Q.getStudyParameters);
+controlPoints.value = .5;
+plotCube(Q.getStudyParameters,2);
+a{3} = controlPoints;
+%---
+
+%% compare example between aitken with three points and QB with 2
+% additional controlpoints
+
+a={};
+% firts point on the study quadric defined via dual quaternions
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[0 0 0.5]));
+Q = T;
+controlPoints.coords = double(Q.getStudyParameters);
+controlPoints.value = 0;
+plotCube(Q.getStudyParameters,2);
+hold on;
+a{1} = controlPoints;
+% second point
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[2 0 3]));
+R = Dualquaternion(Quaternion(0.9239,[0 .5 0.3827]),Quaternion);
+Q = T*R;
+controlPoints.coords = double(Q.getStudyParameters);
+controlPoints.value = 0.25;
+plotCube(Q.getStudyParameters,2);
+a{2} = controlPoints;
+%---
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[3 -0.5 0]));
+R = Dualquaternion(Quaternion( 0.9808 ,[0.1379 0 0.1379]),Quaternion);
+Q = T*R;
+controlPoints.coords = double(Q.getStudyParameters);
+controlPoints.value = 0.5;
+plotCube(Q.getStudyParameters,2);
+a{3} = controlPoints;
+%---
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[0 -1.5 -2]));
+% R = Dualquaternion(Quaternion( 0.9808 ,[0.1379 0 0.1379]),Quaternion);
+R = Dualquaternion(Quaternion( 0.9808 ,[ 0 0.1379 0.1379]),Quaternion);
+Q = T*R;
+controlPoints.coords = double(Q.getStudyParameters);
+controlPoints.value = 0.75;
+plotCube(Q.getStudyParameters,2);
+a{4} = controlPoints;
+%---
+R = Dualquaternion(Quaternion( 0.8660 ,[0 0.3536 0.3536]),Quaternion);
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[1 -1 -4]));
+% R = Dualquaternion(Quaternion( 0.8660 ,[0 0.3536 0.3536]),Quaternion);
+% T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[2 -1 -5]));
+Q = T*R;
+controlPoints.coords = double(Q.getStudyParameters);
+controlPoints.value = 1;
+plotCube(Q.getStudyParameters,2);
+a{5} = controlPoints;
+
+%% interpolation
+point1 = [];
+point2 = [];
+for i = 0:0.01:a{end}.value
+%     point1 = [point1,interpolateOnQuadric(a,i,M)];
+    point2 = [point2,aitken(a,i,M)];
+end
+
+for i = 1:size(point2,2)
+%     h1 = plotCube(STUDYparameter(point1(:,i)));
+    h2 = plotCube(STUDYparameter(point2(:,i)));
+    drawnow;
+%     delete(h1)
+%     delete(h2)
+end
+%% input for QB curve in study quadric
+
+a={};
+% firts point on the study quadric defined via dual quaternions
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[0 0 0.5]));
+Q = T;
+controlPoints.coords = double(Q.getStudyParameters);
+plotCube(Q.getStudyParameters,1.5);
+hold on;
+a{1} = controlPoints;
+% second point
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[0 0.5 4]));
+R = Dualquaternion(Quaternion(0.7071,[0.4082  0.4082  0.4082]),Quaternion);
+Q = T*R;
+controlPoints.coords = double(Q.getStudyParameters);
+plotCube(Q.getStudyParameters,1.5);
+a{2} = controlPoints;
+%---
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[2 0 3]));
+R = Dualquaternion(Quaternion(0.9239,[0 .5 0.3827]),Quaternion);
+Q = T*R;
+controlPoints.coords = double(Q.getStudyParameters);
+plotCube(Q.getStudyParameters,1.5);
+a{3} = controlPoints;
+%---
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[3 -0.5 4]));
+R = Dualquaternion(Quaternion(0.9877,[0 0.1106 0.1106]),Quaternion);
+Q = T*R;
+controlPoints.coords = double(Q.getStudyParameters);
+plotCube(Q.getStudyParameters,1.5);
+a{4} = controlPoints;
+%---
+T = Dualquaternion(Quaternion(1,[0 0 0]),Quaternion(0,[3 -0.5 0]));
+R = Dualquaternion(Quaternion( 0.9808 ,[0.1379 0 0.1379]),Quaternion);
+Q = T*R;
+controlPoints.coords = double(Q.getStudyParameters);
+plotCube(Q.getStudyParameters,1.5);
+a{5} = controlPoints;
+%% interpolation by usind QBinterpolants
+tic
+point1 = [];
+for i = 0:0.01:1
+    point1 = [point1,QBinterpolation(a,i,M)];
+end
+toc
+
+% aviobj = avifile('D:\UNI\Diplomarbeit\Toolbox - kinematics\example.avi','compression','Cinepak')
+
+for i = 1:size(point1,2)
+    h1 = plotCube(STUDYparameter(point1(:,i)));
+    drawnow;
+%     F = getframe(gcf);
+%     aviobj = addframe(aviobj,F);
+    delete(h1)
+end
+% aviobj = close(aviobj);

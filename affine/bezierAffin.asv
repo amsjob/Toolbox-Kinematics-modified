@@ -1,0 +1,32 @@
+function res = bezierAffin(coords,k)
+
+% paramter werte werden hier für vier zu interpolierende Punkte von hand
+% gesetzt
+
+%
+% for i=1:length(coords)-1
+%     a{i}.x = (1 - k) *coords{i}.x + (k)*coords{i+1}.x;
+%     a{i}.y = (1 - k)*coords{i}.y + k*coords{i+1}.y;
+% end
+%
+% for i=1:length(a)-1
+%     b{i}.x = (1-k)*a{i}.x + k*a{i+1}.x;
+%     b{i}.y = (1-k)*a{i}.y + k*a{i+1}.y;
+% end
+%
+% for i=1:length(b)-1
+%     c{i}.x = (1-k)*b{i}.x + k*b{i+1}.x;
+%     c{i}.y = (1-k)*b{i}.y + k*b{i+1}.y;
+% end
+%
+% res = c{1};
+
+
+if length(coords)==1
+    res = coords;
+else
+    for i=1:length(coords)-1
+        a{i}.x = (1 - k) *coords{i}.x + (k)*coords{i+1}.x;
+        a{i}.y = (1 - k)*coords{i}.y + k*coords{i+1}.y;
+    end
+end

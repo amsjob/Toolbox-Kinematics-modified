@@ -1,0 +1,106 @@
+classdef RotationMatrix
+    %    RotationMatrix - class for creation of rotation matrixs using
+    %    different methods
+    
+    % o history
+    %   Daniel Klawitter
+    %   created 21-10-2009 - 14:23
+    %
+    
+    % o summary
+    %   class to generate matrix and perform some operations on it
+    %
+    % o TODO:
+    %   norm euler coordinates
+    %
+    % o call of the constructor:
+    % construct a RotationMatrix by using EULER coordinates
+A = RotationMatrix('EULER',[.5 .5 .5 .5]);
+% construct a RotationMatrix by giving the axis and the angle
+A = RotationMatrix('GENERAL',2,[0; 0; 5]);
+% construct a RotationMatrix by using RODRIGUES coordinates
+A = RotationMatrix('RODRIGUES',[-1; 2; 1]);
+% construct a RotationMatrix by using exponential coordinates
+A = RotationMatrix('EXPONENTIAL',[0; 1; 1],pi/4);
+    
+    properties
+        data
+    end
+    
+    methods
+        
+        function obj = RotationMatrix( varargin )
+            if nargin < 2
+                obj.data = eye(3);
+            else
+                switch varargin{1}
+                    case 'GENERAL'
+                        % generates a 3x3 rotation matrix with axis d and angle phi
+                        % auf bogenmaß umrechnen
+                        % phi = phi/180 * pi;
+                        % achse normieren
+                        phi = varargin{2};
+                        d = varargin{3};
+                        d = d/norm(d,2);
+                        if size(d,1) == 1
+                            d = d';
+                        end
+                        obj.data = cos(phi)*eye(3,3) + (1 - cos(phi))*(d*d') + sin(phi)* [ 0 -d(3) d(2); d(3) 0 -d(1); -d(2) d(1) 0];
+                    case 'EULER'
+                        % generates a rotation matrix out of EULER parameters, usefull for
+                        % quaternion calculation
+                        a = varargin{2};
+                        obj.data = [a(1)^2 + a(2)^2- a(3)^2- a(4)^2, 2*(a(2)*a(3)-a(1)*a(4)) , 2*(a(2)*a(4)+a(1)*a(3)) ;
+                            2*(a(3)*a(2)+ a(1)*a(4)), a(1)^2 - a(2)^2+ a(3)^2- a(4)^2, 2*(a(3)*a(4)-a(1)*a(2));
+                            2*(a(4)*a(2)-a(1)*a(3)) , 2*(a(3)*a(4)+a(1)*a(2))   ,a(1)^2 - a(2)^2- a(3)^2+ a(4)^2 ];
+                    case 'RODRIGUES'
+                        % generates a rotationmatrix A out fo the three compionents from the vector
+                        % containing the RODRIGUES coordinates
+                        s = varargin{2};
+                        S = skew(s);
+                        obj.data = inv(eye(3) - S) * (eye(3) + S);
+                    case 'EXPONENTIAL'
+                        % generates a rotation matrix by using exponential coordinates
+                        % omega is a unit vector of the axis and theta the angle in
+                        % radians
+                        omega = varargin{2};
+                        theta = varargin{3};
+                        % norm the axis
+                        if sqrt(sum(omega.^2))~=1
+                           omega = 1/sqrt(sum(omega.^2)).*omega;
+                        end
+                        S = skew(omega);
+                        obj.data = eye(3) + S * sin(theta) + S^2 * (1 - cos(theta));
+                    otherwise
+                        % default by user input error
+                        disp('no method case matched, default set to eye(3)');
+                        obj.data = eye(3);
+                end
+            end
+        end
+        
+        % transforms the 3x3 rotation matrix to a 4x4 homogeneous rotation
+        % matrix
+        function obj = toHomogeneousMatrix(A)
+            obj = HomogeneousTransformationMatrix;
+            obj.data(2:end,2:end) = A.data;
+        end
+
+        function phi = getAngle(A)
+            phi = acos(1/2*(trace(A.data)-1));
+        end
+        
+        function d = getAxis(A)
+            d = zeros(3,1);
+            phi = getAngle(A);
+            d(1) = 1/(2*sin(phi))*(A.data(3,2)-A.data(2,3));
+            d(2) = 1/(2*sin(phi))*(A.data(1,3)-A.data(3,1));
+            d(3) = 1/(2*sin(phi))*(A.data(2,1)-A.data(1,2));
+        end
+        
+        function disp(A)
+            disp(A.data);
+        end
+    end    
+end
+

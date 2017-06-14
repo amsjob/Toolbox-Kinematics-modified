@@ -1,0 +1,61 @@
+function point = getSphereQBpoint(a0,a2,tvalue)
+% calculate the point of the next qb segment that has the same tangent at
+% the connection point
+%
+%
+%
+%         o------o-----o
+%        /              \
+%       /                \
+%      /                  \
+%     o                    P                   o
+%                           \                 /
+%                            \               /
+%                             \             /
+%                              X-----o-----o
+%
+%   the tangent in point P is given to this function. calculation are just
+%   on the second segment that shall get the tangent in its startpoint. the
+%   point X is the result of this function
+
+% handle the functions to this function and make it independent from the
+% kind of the quadric
+
+dx1 = @(a00,a01,a02,a03,a10,a11,a12,a13,a20,a21,a22,a23,t,t1)a10.*t1.*(2.*t-1).*(t1-1).*(a01.*a21-a00.*a20+a02.*a22+a03.*a23)...
+    -a00.*t1.*(t1-2.*t+1).*(a11.*a21-a10.*a20+a12.*a22+a13.*a23)-a20.*(2.*t-t1).*(t1-1).*(a01.*a11-a00.*a10+a02.*a12+a03.*a13);
+
+dx2 = @(a00,a01,a02,a03,a10,a11,a12,a13,a20,a21,a22,a23,t,t1)a11.*t1.*(2.*t-1).*(t1-1).*(a01.*a21-a00.*a20+a02.*a22+a03.*a23)...
+    -a01.*t1.*(t1-2.*t+1).*(a11.*a21-a10.*a20+a12.*a22+a13.*a23)-a21.*(2.*t-t1).*(t1-1).*(a01.*a11-a00.*a10+a02.*a12+a03.*a13);
+
+dx3 = @(a00,a01,a02,a03,a10,a11,a12,a13,a20,a21,a22,a23,t,t1)a12.*t1.*(2.*t-1).*(t1-1).*(a01.*a21-a00.*a20+a02.*a22+a03.*a23)...
+    -a02.*t1.*(t1-2.*t+1).*(a11.*a21-a10.*a20+a12.*a22+a13.*a23)-a22.*(2.*t-t1).*(t1-1).*(a01.*a11-a00.*a10+a02.*a12+a03.*a13);
+
+dx4 = @(a00,a01,a02,a03,a10,a11,a12,a13,a20,a21,a22,a23,t,t1)a13.*t1.*(2.*t-1).*(t1-1).*(a01.*a21-a00.*a20+a02.*a22+a03.*a23)...
+    -a03.*t1.*(t1-2.*t+1).*(a11.*a21-a10.*a20+a12.*a22+a13.*a23)-a23.*(2.*t-t1).*(t1-1).*(a01.*a11-a00.*a10+a02.*a12+a03.*a13);
+
+
+for i = 0:length(a0)-1
+    var1=['a0',num2str(i)];
+    var2=['a2',num2str(i)];
+    dx1=subs(dx1,var1,a0(i+1));
+    dx1=subs(dx1,var2,a2(i+1));
+    dx2=subs(dx2,var1,a0(i+1));
+    dx2=subs(dx2,var2,a2(i+1));
+    dx3=subs(dx3,var1,a0(i+1));
+    dx3=subs(dx3,var2,a2(i+1));
+    dx4=subs(dx4,var1,a0(i+1));
+    dx4=subs(dx4,var2,a2(i+1));
+end
+% insert t=0
+dx1=subs(dx1,'t',0);
+dx2=subs(dx2,'t',0);
+dx3=subs(dx3,'t',0);
+dx4=subs(dx4,'t',0);
+
+% insert t=tvalue
+dx1=subs(dx1,'t1',tvalue);
+dx2=subs(dx2,'t1',tvalue);
+dx3=subs(dx3-1,'t1',tvalue);
+dx4=subs(dx4,'t1',tvalue);
+
+S=solve(dx1,dx2,dx3,dx4)

@@ -1,0 +1,9 @@
+function [ eulerCoords ] = getEulerCoords( phi, d )
+%getEulerCoords gives euler coordinates from given angle and axis
+%   Detailed explanation goes here
+if sum(d.^2) ~= 1
+    d = 1/sqrt(sum(d).^2) .*d;
+end
+
+end
+

@@ -1,0 +1,96 @@
+function point = QBinterpolation(controlPoints,t)
+
+% o history
+%   Daniel Klawitter
+%   created 16-11-2009 - 17:55
+%
+% o summary
+%      Generalization of de castelja algorithm (see farin - CAGD)
+%      instead of affine ratios cross ratios in projective space are used
+%      and in stead of three points in affin space, four point are used
+%      for one cross ratio
+% 
+%      this algorithmus calculates one point on the hyperquadric with
+%      parameter value t through subdivision
+% 
+%      interpolate on the quadric spezified through its Matrix M
+%      this algorithm should walk in every dimension, but the user has to
+%      change the quadric matrix for his purposes
+%      the matrix for a sphere is implemented and the matrix of the study
+%      quadric (the image of the kinematic mapping SE(3)--> IP_7)
+%      note that this algorithmus works on homogeneous coordinates
+%
+%      for an exmaple on the sphere see the startfiles
+%
+% input:  o controllPoints
+%           cell Array containing struct controllPoints
+%           controllPoints.coords ... coordinates on the quadric (study
+%           quadric)
+% 
+%           the number of controllpoints must be odd because in other case
+%           there will not exist a solution (see Gfrerrer)
+% 
+%         o t ... the parameter value, for that the point on the interpolant
+%           shall be calculated
+% output: o point...the point on the interpolant at the parameter t in
+%           homogeneous coordinates
+%
+% todo:   o if point lay on a line, take this line as solution ^^
+%           only neccessary if the quadric contains straight lines
+%
+% literature: Gfrerrer - On the construction of rational curves on
+%             hyperquadrics
+
+global M
+% matrix of the study quadric
+M = diag([.5 .5 .5 .5],-4) + diag([.5 .5 .5 .5],4);
+
+% matrix of the unit sphere in IR³
+% M = diag([-1 1 1 1]);
+
+% matrix of the hyperboloid 3x^2 + 2y^2 - z^2 = 1 in IR³
+% M = diag([-1 3 2 -1]);
+
+n = length(controlPoints);
+
+if length(controlPoints)==1
+   point = controlPoints{1}.coords;
+else
+
+    b={};
+    for i = 1:n-2
+
+        b{i}.coords = f0(t)*controlPoints{i+1}.coords'*M*controlPoints{n}.coords*controlPoints{1}.coords +...
+                      f1(t)* controlPoints{1}.coords'*M*controlPoints{n}.coords*controlPoints{i+1}.coords+...
+                      f2(t)* controlPoints{1}.coords'*M*controlPoints{i+1}.coords*controlPoints{n}.coords;
+    end
+    point = QBinterpolation(b,t);
+end
+end
+
+
+function res = f0(t)
+%
+% the parameter values can be changed, t0 is the value at the startpoint
+% t1 at the midpoint and t2 at the end point
+% these three point are interplated by the QB
+%
+% t0 = 0;
+% t1 =.5;
+% t2 = 1;
+
+res = (-0.5)*(-1)*(t-0.5)*(t-1);
+
+end
+
+function res = f1(t)
+
+res = (0.5)*(-0.5)*(t)*(t-1);
+
+end
+
+function res = f2(t)
+
+res = (1)*(0.5)*(t)*(t-0.5);
+
+end
