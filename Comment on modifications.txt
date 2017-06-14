@@ -1,0 +1,7 @@
+The implemented functions are mainly based on the general arithmetics of quaternions and dual quaternions, 
+but also functions proposed by P. Tsiotras. The library itself is built upon the framework written by
+D. Klawitter.
+
+
+
+
